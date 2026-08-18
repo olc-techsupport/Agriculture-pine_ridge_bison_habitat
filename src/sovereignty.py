@@ -138,7 +138,7 @@ def print_data_acknowledgment(source_keys: list[str] | None = None) -> None:
 
 def generate_citations(source_keys: list[str]) -> str:
     """Generate a plain-text citation block for notebook outputs."""
-    lines = ["DATA CITATIONS", "=" * 55]
+    lines = ["DATA CITATIONS", ]
     for key in source_keys:
         src = _DATA_SOURCES.get(key)
         if not src:
