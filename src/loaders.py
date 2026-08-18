@@ -322,7 +322,13 @@ def load_srtm_dem(
     if cache_file.exists() and cache_file.stat().st_size > 0 and not force_refresh:
         return cache_file
 
+    # A small geographic buffer prevents edge gaps when this WGS84 DEM is
+    # reprojected to the curved Albers analysis grid.
     west, south, east, north = bbox
+    buffer_deg = 0.05
+    west, south, east, north = (
+        west - buffer_deg, south - buffer_deg, east + buffer_deg, north + buffer_deg
+    )
     paths: list[Path] = []
     for lat in range(math.floor(south), math.ceil(north)):
         for lon in range(math.floor(west), math.ceil(east)):
@@ -357,7 +363,7 @@ def load_srtm_dem(
 
     datasets = [rasterio.open(path) for path in paths]
     try:
-        mosaic, transform = merge(datasets, bounds=bbox, nodata=-32768)
+        mosaic, transform = merge(datasets, bounds=(west, south, east, north), nodata=-32768)
         profile = datasets[0].profile.copy()
         profile.update(height=mosaic.shape[1], width=mosaic.shape[2], transform=transform,
                        compress="lzw", nodata=-32768)
