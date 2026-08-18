@@ -1,5 +1,6 @@
-"""Validation helpers for BHSI inputs and patch outputs."""
 from __future__ import annotations
+
+"""Validation helpers for BHSI inputs and patch outputs."""
 
 from pathlib import Path
 import numpy as np

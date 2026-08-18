@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 raster_utils.py for raster alignment, resampling, and normalization utilities.
 
@@ -9,7 +11,6 @@ All BHSI component rasters must be aligned to the same grid before combination:
 
 Functions here handle that alignment pipeline.
 """
-from __future__ import annotations
 
 import warnings
 import numpy as np

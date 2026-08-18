@@ -1,10 +1,11 @@
+from __future__ import annotations
+
 """
 sovereignty.py data governance acknowledgment for pine_ridge_bison_habitat.
 
 This analysis describes Oglala Lakota land for Oglala Lakota land
 restoration purposes. All frameworks below apply.
 """
-from __future__ import annotations
 from src.constants import GOVERNANCE_REFS
 
 _PREAMBLE = """

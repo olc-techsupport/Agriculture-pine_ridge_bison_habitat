@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 """
 constants.py project-wide constants for pine_ridge_bison_habitat.
 """
-from __future__ import annotations
+
 from pathlib import Path
 
 # Repository root 
@@ -75,7 +77,7 @@ NLCD_BISON_SUITABILITY = {
     95: ("Emergent Herbaceous Wetland", 0.50),
 }
 
-# gSSURGO / SoilDataAccess 
+# gSSURGO/SoilDataAccess 
 SOIL_DATA_ACCESS_URL = "https://SDMDataAccess.sc.egov.usda.gov/Tabular/post.rest"
 
 # USGS 3DEP 

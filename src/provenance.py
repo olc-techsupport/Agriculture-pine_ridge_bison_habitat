@@ -1,5 +1,6 @@
-"""Write a reproducible, reviewable manifest for BHSI outputs."""
 from __future__ import annotations
+
+"""Write a reproducible, reviewable manifest for BHSI outputs."""
 
 from datetime import datetime, timezone
 import json
