@@ -15,6 +15,7 @@ Data sources: Census TIGER, ORNL DAAC (MODIS), MRLC (NLCD),
 """
 
 import io
+import gzip
 import json
 import logging
 import os
@@ -37,7 +38,7 @@ from src.constants import (
     ORNL_BASE, MODIS_PRODUCT, MODIS_BAND,
     NDVI_SCALE, NDVI_FILL, MODIS_YEAR_CHUNKS,
     SOIL_DATA_ACCESS_URL,
-    TNM_API_URL, DEM_DATASET, SRTM_GLOBALDEM_URL, SRTM_DEM_TYPE,
+    TNM_API_URL, DEM_DATASET, SRTM_SKADI_BASE,
     NHD_FLOWLINE_URL, NHD_WATERBODY_URL,
     MACA_BASE, MACA_MODEL,
 )
@@ -311,26 +312,60 @@ def load_ssurgo_grazing_capacity(
 def load_srtm_dem(
     bbox: tuple[float, float, float, float], force_refresh: bool = False,
 ) -> Path:
-    """Download a compact, bbox-clipped SRTM GL3 GeoTIFF from OpenTopography."""
-    cache_file = CACHE_DIR / "dem_srtm_gl3_pine_ridge.tif"
+    """Download and merge public AWS-hosted SRTM 1-arc-second HGT tiles."""
+    import math
+    import rasterio
+    from rasterio.merge import merge
+    from rasterio.transform import from_origin
+
+    cache_file = CACHE_DIR / "dem_srtm_pine_ridge.tif"
     if cache_file.exists() and cache_file.stat().st_size > 0 and not force_refresh:
         return cache_file
-    api_key = os.environ.get("OPENTOPOGRAPHY_API_KEY")
-    if not api_key:
-        raise RuntimeError(
-            "Set OPENTOPOGRAPHY_API_KEY to a free OpenTopography API key before downloading SRTM."
-        )
+
     west, south, east, north = bbox
-    response = requests.get(
-        SRTM_GLOBALDEM_URL,
-        params={"demtype": SRTM_DEM_TYPE, "south": south, "north": north,
-                "west": west, "east": east, "outputFormat": "GTiff", "API_Key": api_key},
-        timeout=300,
-    )
-    response.raise_for_status()
-    if len(response.content) < 1024:
-        raise RuntimeError("OpenTopography returned an unexpectedly small SRTM response.")
-    cache_file.write_bytes(response.content)
+    paths: list[Path] = []
+    for lat in range(math.floor(south), math.ceil(north)):
+        for lon in range(math.floor(west), math.ceil(east)):
+            ns = f"{'N' if lat >= 0 else 'S'}{abs(lat):02d}"
+            ew = f"{'E' if lon >= 0 else 'W'}{abs(lon):03d}"
+            stem = f"{ns}{ew}"
+            hgt_path = CACHE_DIR / f"srtm_{stem}.hgt"
+            tile_path = CACHE_DIR / f"srtm_{stem}.tif"
+            if not tile_path.exists() or tile_path.stat().st_size == 0:
+                if hgt_path.exists() and hgt_path.stat().st_size > 0:
+                    raw = hgt_path.read_bytes()
+                else:
+                    response = requests.get(f"{SRTM_SKADI_BASE}/{ns}/{stem}.hgt.gz", timeout=120)
+                    response.raise_for_status()
+                    raw = gzip.decompress(response.content)
+                side = 3601
+                values = np.frombuffer(raw, dtype=">i2")
+                if values.size != side * side:
+                    raise RuntimeError(f"Unexpected SRTM tile size for {stem}: {values.size} samples")
+                values = values.reshape((side, side))
+                profile = {
+                    "driver": "GTiff", "height": side, "width": side, "count": 1,
+                    "dtype": "int16", "crs": "EPSG:4326", "nodata": -32768,
+                    "transform": from_origin(lon, lat + 1, 1 / 3600, 1 / 3600),
+                    "compress": "lzw",
+                }
+                with rasterio.open(tile_path, "w", **profile) as dst:
+                    dst.write(values, 1)
+                if hgt_path.exists():
+                    hgt_path.unlink()
+            paths.append(tile_path)
+
+    datasets = [rasterio.open(path) for path in paths]
+    try:
+        mosaic, transform = merge(datasets, bounds=bbox, nodata=-32768)
+        profile = datasets[0].profile.copy()
+        profile.update(height=mosaic.shape[1], width=mosaic.shape[2], transform=transform,
+                       compress="lzw", nodata=-32768)
+        with rasterio.open(cache_file, "w", **profile) as dst:
+            dst.write(mosaic)
+    finally:
+        for dataset in datasets:
+            dataset.close()
     return cache_file
 
 

@@ -81,8 +81,7 @@ NLCD_BISON_SUITABILITY = {
 SOIL_DATA_ACCESS_URL = "https://SDMDataAccess.sc.egov.usda.gov/Tabular/post.rest"
 
 # Topography: compact SRTM GL3 (about 90m); it is resampled to the analysis grid.
-SRTM_GLOBALDEM_URL = "https://portal.opentopography.org/API/globaldem"
-SRTM_DEM_TYPE = "SRTMGL3"
+SRTM_SKADI_BASE = "https://s3.amazonaws.com/elevation-tiles-prod/skadi"
 
 # USGS 3DEP (legacy alternative)
 TNM_API_URL    = "https://tnmaccess.nationalmap.gov/api/v1/products"
