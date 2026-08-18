@@ -17,6 +17,8 @@ Data sources: Census TIGER, ORNL DAAC (MODIS), MRLC (NLCD),
 import io
 import json
 import logging
+import os
+import re
 import warnings
 import zipfile
 import tempfile
@@ -35,7 +37,7 @@ from src.constants import (
     ORNL_BASE, MODIS_PRODUCT, MODIS_BAND,
     NDVI_SCALE, NDVI_FILL, MODIS_YEAR_CHUNKS,
     SOIL_DATA_ACCESS_URL,
-    TNM_API_URL, DEM_DATASET,
+    TNM_API_URL, DEM_DATASET, SRTM_GLOBALDEM_URL, SRTM_DEM_TYPE,
     NHD_FLOWLINE_URL, NHD_WATERBODY_URL,
     MACA_BASE, MACA_MODEL,
 )
@@ -304,6 +306,34 @@ def load_ssurgo_grazing_capacity(
         return pd.DataFrame()
 
 
+# Compact SRTM elevation
+
+def load_srtm_dem(
+    bbox: tuple[float, float, float, float], force_refresh: bool = False,
+) -> Path:
+    """Download a compact, bbox-clipped SRTM GL3 GeoTIFF from OpenTopography."""
+    cache_file = CACHE_DIR / "dem_srtm_gl3_pine_ridge.tif"
+    if cache_file.exists() and cache_file.stat().st_size > 0 and not force_refresh:
+        return cache_file
+    api_key = os.environ.get("OPENTOPOGRAPHY_API_KEY")
+    if not api_key:
+        raise RuntimeError(
+            "Set OPENTOPOGRAPHY_API_KEY to a free OpenTopography API key before downloading SRTM."
+        )
+    west, south, east, north = bbox
+    response = requests.get(
+        SRTM_GLOBALDEM_URL,
+        params={"demtype": SRTM_DEM_TYPE, "south": south, "north": north,
+                "west": west, "east": east, "outputFormat": "GTiff", "API_Key": api_key},
+        timeout=300,
+    )
+    response.raise_for_status()
+    if len(response.content) < 1024:
+        raise RuntimeError("OpenTopography returned an unexpectedly small SRTM response.")
+    cache_file.write_bytes(response.content)
+    return cache_file
+
+
 # USGS 3DEP Elevation
 
 def load_3dep_dem(
@@ -342,15 +372,35 @@ def load_3dep_dem(
         )
         return None
 
+    # The inventory contains repeated publication dates and both 1/3 and
+    # 1/3 arc-second products.  Keep the most recent 1/3 arc-second product
+    # per one-degree tile so the mosaic is complete without duplicate overlap.
+    selected: dict[str, dict] = {}
+    for item in items:
+        title = item.get("title", "")
+        match = re.search(r"n\d{2}w\d{3}", title.lower())
+        if "1/3 Arc Second" not in title or not match:
+            continue
+        tile_id = match.group(0)
+        if tile_id not in selected or title > selected[tile_id].get("title", ""):
+            selected[tile_id] = item
+    items = [selected[tile_id] for tile_id in sorted(selected)]
+    if not items:
+        warnings.warn("No 1/3 arc-second DEM tiles found for Pine Ridge.", UserWarning)
+        return None
+
     # Download and merge tiles
     tile_paths = []
-    for i, item in enumerate(items[:10]):
+    # Use the complete API result set: limiting this list can omit part of
+    # the requested study area when it spans more than ten DEM tiles.
+    for i, item in enumerate(items):
         url  = item.get("downloadURL", "")
         if not url:
             continue
-        fname = CACHE_DIR / f"dem_tile_{i:03d}.tif"
-        if not fname.exists():
-            print(f"  Downloading tile {i+1}/{min(len(items), 10)}: "
+        tile_match = re.search(r"n\d{2}w\d{3}", item.get("title", "").lower())
+        fname = CACHE_DIR / f"dem_tile_{tile_match.group(0)}.tif"
+        if not fname.exists() or fname.stat().st_size == 0:
+            print(f"  Downloading tile {i+1}/{len(items)}: "
                   f"{item.get('title', '')[:50]}")
             with requests.get(url, stream=True, timeout=300) as dr:
                 dr.raise_for_status()

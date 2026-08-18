@@ -96,9 +96,13 @@ def align_raster_to_template(
             "transform": dst_transform,
             "width":     dst_width,
             "height":    dst_height,
+            "dtype":     "float32",
+            "nodata":    np.nan,
         })
-        dst_data = np.empty(
-            (src.count, dst_height, dst_width), dtype=np.float32
+        # Preserve uncovered areas as NoData rather than leaving arbitrary
+        # memory values that can resemble valid terrain.
+        dst_data = np.full(
+            (src.count, dst_height, dst_width), np.nan, dtype=np.float32
         )
         reproject(
             source      = rasterio.band(src, list(range(1, src.count + 1))),
@@ -106,6 +110,8 @@ def align_raster_to_template(
             src_crs     = src.crs,
             dst_crs     = dst_crs,
             src_transform   = src.transform,
+            src_nodata      = src.nodata,
+            dst_nodata      = np.nan,
             target_aligned_pixels = True,
             dst_transform   = dst_transform,
             resampling      = resample,

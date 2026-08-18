@@ -94,6 +94,13 @@ _DATA_SOURCES = {
         "steward": "US Geological Survey",
         "license": "Public domain (USGS)",
     },
+    "srtm": {
+        "name": "NASA Shuttle Radar Topography Mission (SRTM) GL3 via OpenTopography",
+        "url": "https://portal.opentopography.org/API/globaldem",
+        "steward": "NASA/NGA, distributed by OpenTopography",
+        "license": "See OpenTopography dataset terms and acknowledgement requirements",
+        "citation": "NASA Shuttle Radar Topography Mission (SRTM) Global. Distributed by OpenTopography. doi:10.5069/G9445JDF",
+    },
     "nhd": {
         "name":    "USGS National Hydrography Dataset (NHD) Plus HR",
         "url":     "https://www.usgs.gov/national-hydrography/nhdplus-high-resolution",

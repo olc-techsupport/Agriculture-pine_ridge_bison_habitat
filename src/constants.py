@@ -80,7 +80,11 @@ NLCD_BISON_SUITABILITY = {
 # gSSURGO/SoilDataAccess 
 SOIL_DATA_ACCESS_URL = "https://SDMDataAccess.sc.egov.usda.gov/Tabular/post.rest"
 
-# USGS 3DEP 
+# Topography: compact SRTM GL3 (about 90m); it is resampled to the analysis grid.
+SRTM_GLOBALDEM_URL = "https://portal.opentopography.org/API/globaldem"
+SRTM_DEM_TYPE = "SRTMGL3"
+
+# USGS 3DEP (legacy alternative)
 TNM_API_URL    = "https://tnmaccess.nationalmap.gov/api/v1/products"
 DEM_DATASET    = "National Elevation Dataset (NED) 1/3 arc-second"
 # Slope thresholds for bison suitability (degrees)
