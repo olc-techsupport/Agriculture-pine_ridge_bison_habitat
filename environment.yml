@@ -16,6 +16,9 @@ dependencies:
   - netcdf4>=1.6
   - xarray>=2023.6
   - pydap==3.5.9
+  - planetary-computer>=1.0
+  - pystac-client>=0.8
+  - odc-stac>=0.3
   # Data 
   - pandas>=2.0
   - numpy>=1.24

@@ -1,8 +1,8 @@
 """
-loaders.py data download and cache functions for pine_ridge_bison_habitat.
+loaders.py — Data download and cache functions for pine_ridge_bison_habitat.
 
 All loaders follow the same pattern:
-  1. Check cache and return immediately if file exists
+  1. Check cache — return immediately if file exists
   2. Download from source API
   3. Cache to data/cache/
   4. Return clean GeoDataFrame, DataArray, or DataFrame
@@ -48,17 +48,18 @@ _retry = retry(
 )
 
 
-# Pine Ridge boundary
+# ── Pine Ridge boundary ────────────────────────────────────────────────────────
 
 def load_pine_ridge_boundary(force_refresh: bool = False) -> gpd.GeoDataFrame:
     """
     Load Pine Ridge Reservation boundary from Census TIGER AIANNH.
 
     Returns
+    -------
     GeoDataFrame with one feature: Pine Ridge boundary in EPSG:4326.
     area_km2 and area_acres columns added.
     """
-    cache_path = CACHE_DIR/"pine_ridge_boundary.geojson"
+    cache_path = CACHE_DIR / "pine_ridge_boundary.geojson"
 
     if not cache_path.exists() or force_refresh:
         log.info("Downloading Census TIGER AIANNH...")
@@ -87,7 +88,7 @@ def load_pine_ridge_boundary(force_refresh: bool = False) -> gpd.GeoDataFrame:
     return gdf.reset_index(drop=True)
 
 
-# MODIS NDVI
+# ── MODIS NDVI ────────────────────────────────────────────────────────────────
 
 @_retry
 def fetch_ndvi_point(
@@ -100,9 +101,10 @@ def fetch_ndvi_point(
     Requests are chunked within each year to respect the 10-tile API limit.
 
     Returns
+    -------
     DataFrame with columns: date, ndvi, pixel_count
     """
-    cache_file = CACHE_DIR/f"ndvi_{site_name}_{start_year}_{end_year}.csv"
+    cache_file = CACHE_DIR / f"ndvi_{site_name}_{start_year}_{end_year}.csv"
     if cache_file.exists():
         return pd.read_csv(cache_file, parse_dates=["date"])
 
@@ -156,45 +158,81 @@ def fetch_ndvi_point(
     return df
 
 
-# NLCD Land Cover
+# ── NLCD Land Cover ───────────────────────────────────────────────────────────
 
 def load_nlcd_bbox(
     bbox: tuple[float, float, float, float],
     force_refresh: bool = False,
 ) -> Path:
     """
-    Download NLCD 2021 land cover GeoTIFF for a bounding box via MRLC WCS.
+    Download NLCD 2021 land cover GeoTIFF for a bounding box.
+
+    Tries the MRLC WCS endpoint first. If unavailable, raises a clear
+    error with manual download instructions.
 
     Returns
+    -------
     Path to cached GeoTIFF file.
     """
-    cache_file = CACHE_DIR/"nlcd_2021_pine_ridge.tif"
+    cache_file = CACHE_DIR / "nlcd_2021_pine_ridge.tif"
     if cache_file.exists() and not force_refresh:
         return cache_file
 
-    print("Downloading NLCD 2021 land cover...")
-    # MRLC WCS GetCoverage request in EPSG:4326
     min_lon, min_lat, max_lon, max_lat = bbox
-    url = (
-        "https://www.mrlc.gov/geoserver/mrlc_display/"
-        "NLCD_2021_Land_Cover_L48/wcs"
-        "?SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage"
-        "&COVERAGEID=NLCD_2021_Land_Cover_L48"
-        f"&SUBSET=Long({min_lon},{max_lon})"
-        f"&SUBSET=Lat({min_lat},{max_lat})"
-        "&FORMAT=image/geotiff"
+
+    # MRLC WCS — try both workspace variants
+    wcs_urls = [
+        (
+            "https://www.mrlc.gov/geoserver/mrlc_download/"
+            "NLCD_2021_Land_Cover_L48/wcs"
+            "?SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage"
+            "&COVERAGEID=NLCD_2021_Land_Cover_L48"
+            f"&SUBSET=Long({min_lon},{max_lon})"
+            f"&SUBSET=Lat({min_lat},{max_lat})"
+            "&FORMAT=image/geotiff"
+        ),
+        (
+            "https://www.mrlc.gov/geoserver/NLCD_Land_Cover/"
+            "NLCD_2021_Land_Cover_L48/wcs"
+            "?SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage"
+            "&COVERAGEID=NLCD_2021_Land_Cover_L48"
+            f"&SUBSET=Long({min_lon},{max_lon})"
+            f"&SUBSET=Lat({min_lat},{max_lat})"
+            "&FORMAT=image/geotiff"
+        ),
+    ]
+
+    for url in wcs_urls:
+        try:
+            print(f"Trying NLCD WCS endpoint...")
+            r = requests.get(url, timeout=300, stream=True)
+            if r.status_code == 200 and len(r.content) > 10000:
+                with open(cache_file, "wb") as f:
+                    for chunk in r.iter_content(chunk_size=1024 * 1024):
+                        if chunk:
+                            f.write(chunk)
+                print(f"NLCD cached: {cache_file.stat().st_size / 1e6:.1f} MB")
+                return cache_file
+        except Exception as e:
+            log.debug(f"WCS attempt failed: {e}")
+            continue
+
+    # Both endpoints failed — provide manual download instructions
+    raise RuntimeError(
+        "NLCD 2021 WCS endpoint unavailable. Download manually:\n\n"
+        "  1. Go to: https://www.mrlc.gov/viewer/\n"
+        "  2. Use the rectangle tool to select the Pine Ridge area\n"
+        "  3. Select 'NLCD 2021 Land Cover L48' layer\n"
+        "  4. Download the GeoTIFF\n"
+        f"  5. Save to: {cache_file}\n\n"
+        "Alternatively, download the full CONUS file from:\n"
+        "  https://www.mrlc.gov/data (NLCD 2021 Land Cover)\n"
+        "  Then clip to Pine Ridge using the boundary in:\n"
+        f"  outputs/pine_ridge_boundary.geojson"
     )
-    r = requests.get(url, timeout=300, stream=True)
-    r.raise_for_status()
-    with open(cache_file, "wb") as f:
-        for chunk in r.iter_content(chunk_size=1024 * 1024):
-            if chunk:
-                f.write(chunk)
-    print(f"NLCD cached: {cache_file.stat().st_size / 1e6:.1f} MB")
-    return cache_file
 
 
-# gSSURGO Soils 
+# ── gSSURGO Soils ─────────────────────────────────────────────────────────────
 
 @_retry
 def load_ssurgo_grazing_capacity(
@@ -206,10 +244,11 @@ def load_ssurgo_grazing_capacity(
     within a bounding box.
 
     Returns
+    -------
     DataFrame with columns: mukey, musym, muname, graze_class, nonirr_cap_cl,
     nonirr_cap_subcl, area_acres
     """
-    cache_file = CACHE_DIR/"ssurgo_grazing.csv"
+    cache_file = CACHE_DIR / "ssurgo_grazing.csv"
     if cache_file.exists() and not force_refresh:
         return pd.read_csv(cache_file)
 
@@ -268,7 +307,7 @@ def load_ssurgo_grazing_capacity(
         return pd.DataFrame()
 
 
-# USGS 3DEP Elevation 
+# ── USGS 3DEP Elevation ───────────────────────────────────────────────────────
 
 def load_3dep_dem(
     bbox: tuple[float, float, float, float],
@@ -278,9 +317,10 @@ def load_3dep_dem(
     Download USGS 3DEP 1/3 arc-second DEM tiles for a bounding box.
 
     Returns
+    -------
     Path to cached DEM GeoTIFF, or None if no coverage found.
     """
-    cache_file = CACHE_DIR/"dem_3dep_pine_ridge.tif"
+    cache_file = CACHE_DIR / "dem_3dep_pine_ridge.tif"
     if cache_file.exists() and not force_refresh:
         return cache_file
 
@@ -352,7 +392,7 @@ def load_3dep_dem(
     return cache_file
 
 
-# NHD Streams and Water Bodies 
+# ── NHD Streams and Water Bodies ──────────────────────────────────────────────
 
 @_retry
 def load_nhd_water_features(
@@ -363,10 +403,11 @@ def load_nhd_water_features(
     Load NHD stream flowlines and water body polygons for a bounding box.
 
     Returns
+    -------
     (streams_gdf, waterbodies_gdf) — both in EPSG:4326
     """
-    stream_cache = CACHE_DIR/"nhd_streams.geojson"
-    water_cache  = CACHE_DIR/"nhd_waterbodies.geojson"
+    stream_cache = CACHE_DIR / "nhd_streams.geojson"
+    water_cache  = CACHE_DIR / "nhd_waterbodies.geojson"
 
     def _query_nhd(url: str) -> gpd.GeoDataFrame:
         bbox_str = f"{bbox[0]},{bbox[1]},{bbox[2]},{bbox[3]}"
@@ -418,7 +459,7 @@ def load_nhd_water_features(
     return streams, waterbodies
 
 
-# MACAv2 Climate Projections 
+# ── MACAv2 Climate Projections ────────────────────────────────────────────────
 
 def fetch_maca_monthly(
     lat: float, lon: float,
@@ -433,15 +474,17 @@ def fetch_maca_monthly(
     Handles cftime NoLeap calendar.
 
     Parameters
+    ----------
     variable : MACAv2 variable name e.g. 'tasmax', 'pr'
     scenario : 'rcp45' or 'rcp85'
 
     Returns
+    -------
     DataFrame with columns: date, {variable}
     """
     import xarray as xr
 
-    cache_file = CACHE_DIR/f"maca_{site_name}_{variable}_{scenario}.csv"
+    cache_file = CACHE_DIR / f"maca_{site_name}_{variable}_{scenario}.csv"
     if cache_file.exists():
         return pd.read_csv(cache_file, parse_dates=["date"])
 

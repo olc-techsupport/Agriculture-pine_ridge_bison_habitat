@@ -118,7 +118,7 @@ EXTREME_HEAT_F   = 105          # severe heat stress threshold
 
 # BHSI component weights 
 # Must sum to 1.0
-# Rationale documented in docs/bhsi_weights.md
+# Rationale documented in documents/bhsi_weights.md
 BHSI_WEIGHTS = {
     "vegetation":  0.30,    # dominant factor = what bison eat
     "soils":       0.20,    # grazing capacity = how much the land can support
@@ -128,7 +128,7 @@ BHSI_WEIGHTS = {
 }
 
 # DBSCAN clustering parameters 
-# Documented in docs/methods_clustering.md
+# Documented in documents/methods_clustering.md
 DBSCAN_EPS_M         = 1000    # meters for max distance between pixels in same patch
 DBSCAN_MIN_ACRES     = 500     # minimum viable bison management unit
 BHSI_THRESHOLD_PCT   = 70      # top N% of BHSI scores considered high-suitability

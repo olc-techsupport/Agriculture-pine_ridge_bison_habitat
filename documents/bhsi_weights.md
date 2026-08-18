@@ -5,6 +5,11 @@ The Bison Habitat Suitability Index (BHSI) combines five data layers
 into a single score. Each layer contributes according to a weight that
 reflects its relative importance for bison habitat quality on Pine Ridge.
 
+**Release condition:** a component may distinguish priority patches only when
+it is spatially resolved across the reservation. A reservation-wide fallback
+score is planning context, not patch-scale evidence; see
+`limitations_and_review.md` before presenting results externally.
+
 Default weights (defined in `src/constants.py`):
 
 | Component | Weight | Rationale |

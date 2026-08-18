@@ -29,7 +29,7 @@ score (0–1) across the full Pine Ridge Reservation, synthesizing:
 **Priority restoration units** are viable bison habitat patches identified
 by DBSCAN clustering of high-BHSI pixels, ranked by composite score and
 accompanied by a summary table of area, water access, soils quality, and
-current land cover. See `docs/methods_clustering.md` for the full
+current land cover. See `documents/methods_clustering.md` for the full
 rationale for this approach.
 
 ## Notebooks
@@ -76,6 +76,11 @@ jupyter lab notebooks/
 Run notebooks in order 01 through 07. Each notebook exports intermediate
 results to `outputs/` that the next notebook loads.
 
+Notebook 07 stops unless all five component rasters exist, contain valid
+pixels, and match exactly on CRS, extent, transform, and shape. It also writes
+`outputs/bhsi_provenance.json` with input hashes, parameters, weights, code
+revision, and the required governance review status.
+
 ## Repository Structure
 ```
 pine_ridge_bison_habitat/
@@ -96,7 +101,7 @@ pine_ridge_bison_habitat/
 │   └── cache/               # GITIGNORED: downloaded datasets
 ├── outputs/                 # GITIGNORED: intermediate and final products
 │   └── figures/
-├── docs/
+├── documents/
 │   ├── data_sovereignty.md
 │   ├── methods_clustering.md
 │   └── bhsi_weights.md
@@ -104,6 +109,14 @@ pine_ridge_bison_habitat/
 ├── .gitignore
 └── README.md
 ```
+
+## Current analytical limits
+The soils and climate notebooks currently create reservation-wide planning
+scores when only tabular or point data are available. They must not be
+interpreted as within-reservation variation or used alone to rank patches.
+Before a management decision, replace them with gridded gSSURGO map-unit and
+downscaled climate inputs, review thresholds and weights with the bison
+program, then ground-truth candidate units.
 
 ## Data Sovereignty
 This analysis describes Oglala Lakota land for Oglala Lakota land
@@ -120,7 +133,7 @@ All analysis results should be shared with the Oglala Lakota College
 Cubedynamics program and the relevant Oglala Lakota Nation land
 management offices before any external distribution.
 
-See `docs/data_sovereignty.md` for the full governance framework.
+See `documents/data_sovereignty.md` for the full governance framework.
 
 ## Citation
 Jones, L. (2025). Pine Ridge Bison Habitat Suitability Analysis.
