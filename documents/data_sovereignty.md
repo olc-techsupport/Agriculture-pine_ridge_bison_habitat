@@ -9,7 +9,7 @@ the Oglala Lakota. They are relatives, central to ceremony, food systems,
 and the philosophical relationship between the Lakota people and the land.
 The near-extermination of bison in the 19th century was inseparable from
 the effort to dispossess Indigenous peoples of the Northern Great Plains.
-Restoration is therefore an act of sovereignty, not just ecology.
+Restoration is therefore an assertion of sovereignty.
 
 This analysis exists to support that restoration. It provides information 
 that combines spatial and environmental data from public federal sources

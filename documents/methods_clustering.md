@@ -150,13 +150,13 @@ as a GeoPackage file for use in GIS.
   Assessing Potential Habitat and Carrying Capacity for Reintroduction of
   Plains Bison (*Bison bison bison*) in Banff National Park.
   *PLOS ONE*. doi:10.1371/journal.pone.0150065
-  — HSI model for plains bison reintroduction, carrying
+  HSI model for plains bison reintroduction, carrying
   capacity estimation from forage and terrain data.
 
 - Freese, C.H. et al. (2022). The Potential of Bison Restoration as an
   Ecological Approach to Future Tribal Food Sovereignty on the Northern
   Great Plains. *Frontiers in Ecology and Evolution*.
   doi:10.3389/fevo.2022.826282
-  — HSI analysis of bison habitat on Northern Great Plains
+  HSI analysis of bison habitat on Northern Great Plains
   Tribal reservations including Rosebud; estimates 1,828–4,354 km² of
   additional suitable habitat on reviewed Tribal lands. 
