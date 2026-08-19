@@ -2,7 +2,6 @@
 from pathlib import Path
 import sys
 
-import matplotlib.pyplot as plt
 import numpy as np
 import streamlit as st
 import xarray as xr
@@ -29,39 +28,49 @@ def open_cube(path: str):
 
 
 @st.cache_data(show_spinner=False)
-def preview(path: str, variable: str, max_side: int = 850):
+def preview(path: str, variable: str, max_side: int = 600):
     cube = xr.open_dataset(path)
     step = max(1, int(np.ceil(max(cube.sizes["x"], cube.sizes["y"]) / max_side)))
     return cube[variable].isel(y=slice(None, None, step), x=slice(None, None, step)).values
 
 
 def draw_map(data: np.ndarray, title: str):
-    fig, ax = plt.subplots(figsize=(9, 6))
-    image = ax.imshow(data, cmap="RdYlGn", vmin=0, vmax=1, origin="upper")
-    fig.colorbar(image, ax=ax, label="Suitability (0–1)")
-    ax.set_title(title)
-    ax.set_axis_off()
-    st.pyplot(fig, use_container_width=True)
-    plt.close(fig)
+    """Show a quick red-to-green suitability preview without Matplotlib."""
+    values = np.asarray(data, dtype=np.float32)
+    valid = np.isfinite(values)
+    score = np.nan_to_num(np.clip(values, 0, 1), nan=0.0)
+    image = np.zeros((*score.shape, 3), dtype=np.uint8)
+    image[..., 0] = np.round(220 * (1 - score)).astype(np.uint8)  # red: low
+    image[..., 1] = np.round(80 + 150 * score).astype(np.uint8)   # green: high
+    image[~valid] = (35, 35, 35)  # no data
+    st.image(image, caption=f"{title} — red: lower score; green: higher score", width="stretch")
 
 
 cube = open_cube(str(CUBE_PATH))
-tab_explore, tab_compare, tab_scenario, tab_learn = st.tabs(
-    ["Explore the cube", "Compare layers", "Try weights", "Learning guide"]
+# `st.tabs` computes every tab on every rerun.  A single view picker keeps the
+# first page lightweight enough for ordinary student laptops and local servers.
+view = st.radio(
+    "Choose a view",
+    ["Explore the cube", "Compare layers", "Try weights", "Learning guide"],
+    horizontal=True,
+    label_visibility="collapsed",
 )
 
-with tab_explore:
+if view == "Explore the cube":
     variable = st.selectbox("Choose a data-cube layer", list(cube.data_vars), format_func=str.title)
-    data = preview(str(CUBE_PATH), variable)
-    left, right = st.columns([3, 1])
-    with left:
-        draw_map(data, variable.replace("_", " ").title())
-    with right:
-        valid = data[np.isfinite(data)]
-        st.metric("Mean score", f"{valid.mean():.2f}")
-        st.metric("Higher-score pixels (≥ 0.70)", f"{(valid >= 0.70).mean():.0%}")
-        st.write(f"Grid resolution: {cube.attrs.get('grid_resolution_m', 'unknown')} m")
-        st.write(f"CRS: {cube.attrs.get('crs', 'unknown')}")
+    if st.button("Show selected map", type="primary"):
+        data = preview(str(CUBE_PATH), variable)
+        left, right = st.columns([3, 1])
+        with left:
+            draw_map(data, variable.replace("_", " ").title())
+        with right:
+            valid = data[np.isfinite(data)]
+            st.metric("Mean score", f"{valid.mean():.2f}")
+            st.metric("Higher-score pixels (≥ 0.70)", f"{(valid >= 0.70).mean():.0%}")
+            st.write(f"Grid resolution: {cube.attrs.get('grid_resolution_m', 'unknown')} m")
+            st.write(f"CRS: {cube.attrs.get('crs', 'unknown')}")
+    else:
+        st.info("Choose a layer, then select **Show selected map**. Keeping the first page light helps the local dashboard open reliably.")
 
     st.markdown("#### Inspect one location")
     col1, col2 = st.columns(2)
@@ -70,7 +79,7 @@ with tab_explore:
     point = {name: float(cube[name].isel(y=row, x=col).values) for name in cube.data_vars}
     st.dataframe({"Layer": [name.title() for name in point], "Score": list(point.values())}, hide_index=True)
 
-with tab_compare:
+elif view == "Compare layers":
     first, second = st.columns(2)
     left_name = first.selectbox("First layer", list(cube.data_vars), index=0, format_func=str.title)
     right_name = second.selectbox("Second layer", list(cube.data_vars), index=min(1, len(cube.data_vars) - 1), format_func=str.title)
@@ -82,7 +91,7 @@ with tab_compare:
         draw_map(right_data, right_name.title())
     st.write("Ask: where do the layers agree, where do they differ, and what local knowledge would help interpret those differences?")
 
-with tab_scenario:
+elif view == "Try weights":
     st.write("Move the sliders to explore a hypothetical weighting scenario. This is for learning, not a management recommendation.")
     weights = {name: st.slider(name.title(), 0.0, 1.0, float(BHSI_WEIGHTS[name]), 0.05) for name in COMPONENTS}
     total = sum(weights.values())
@@ -94,7 +103,7 @@ with tab_scenario:
         draw_map(scenario, "Your hypothetical BHSI scenario")
         st.caption("Weights are normalized to sum to 1 for display.")
 
-with tab_learn:
+else:
     st.markdown("### Questions to explore")
     st.markdown("- What patterns do you notice in each layer?\n- Which layers most change the combined map?\n- What does this cube not know about the land, water, or community?\n- What observations would help ground-truth a candidate area?")
     st.markdown("Read `documents/olc_learning_lab.md` for activities and further-study ideas.")
