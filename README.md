@@ -76,6 +76,30 @@ jupyter lab notebooks/
 Run notebooks in order 01 through 07. Each notebook exports intermediate
 results to `outputs/` that the next notebook loads.
 
+### Use the project Python environment
+
+This project requires its Conda environment (`pine-ridge-bison`, Python 3.11).
+Do not run its scripts with a global Python interpreter such as
+`C:\Users\gekek\.local\bin\python3.14.exe`; it will not have the required
+scientific packages.
+
+From the inner repository folder, either activate the environment:
+
+```powershell
+cd C:\Users\gekek\Documents\pine_ridge_bison_habitat\pine_ridge_bison_habitat
+conda activate pine-ridge-bison
+python build_data_cube.py
+```
+
+or run a single command without activating it:
+
+```powershell
+conda run -n pine-ridge-bison python build_data_cube.py
+```
+
+In VS Code, select **Python (pine-ridge-bison)** as the notebook kernel and
+Python interpreter before running notebooks or scripts.
+
 Notebook 07 stops unless all five component rasters exist, contain valid
 pixels, and match exactly on CRS, extent, transform, and shape. It also writes
 `outputs/bhsi_provenance.json` with input hashes, parameters, weights, code
@@ -124,7 +148,7 @@ After notebooks 02–07 finish, build a compact NetCDF data cube containing the
 aligned component layers and composite BHSI:
 
 ```bash
-python build_data_cube.py
+conda run -n pine-ridge-bison python build_data_cube.py
 ```
 
 The resulting `outputs/pine_ridge_bhsi_cube.nc` is suitable for introductory
@@ -132,7 +156,7 @@ Python/R/GIS exploration. For a no-code local map explorer, install the
 environment and run:
 
 ```bash
-streamlit run dashboard/app.py
+conda run -n pine-ridge-bison streamlit run dashboard/app.py
 ```
 
 See `documents/olc_learning_lab.md` for course activities, research questions,
