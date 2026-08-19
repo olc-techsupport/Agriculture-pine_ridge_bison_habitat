@@ -136,6 +136,7 @@ BHSI_WEIGHTS = {
 # Documented in documents/methods_clustering.md
 DBSCAN_EPS_M         = 1000    # meters for max distance between pixels in same patch
 DBSCAN_MIN_ACRES     = 500     # minimum viable bison management unit
+MIN_PATCH_ACRES      = 500     # raster-native contiguous-patch minimum
 BHSI_THRESHOLD_PCT   = 70      # top N% of BHSI scores considered high-suitability
 
 # Growing season 
