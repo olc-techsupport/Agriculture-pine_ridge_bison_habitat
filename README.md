@@ -83,6 +83,18 @@ Do not run its scripts with a global Python interpreter such as
 `C:\Users\gekek\.local\bin\python3.14.exe`; it will not have the required
 scientific packages.
 
+Before running any terminal command, make sure you are in the **inner project
+folder**—the folder that contains `README.md`, `environment.yml`, `notebooks/`,
+and `build_data_cube.py`. The outer `pine_ridge_bison_habitat` folder contains
+this project folder but does not contain the scripts themselves.
+
+```powershell
+cd C:\Users\gekek\Documents\pine_ridge_bison_habitat\pine_ridge_bison_habitat
+Get-ChildItem README.md, environment.yml, build_data_cube.py
+```
+
+If that command lists all three files, you are in the correct folder.
+
 From the inner repository folder, either activate the environment:
 
 ```powershell
