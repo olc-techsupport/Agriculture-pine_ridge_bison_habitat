@@ -180,15 +180,22 @@ Python/R/GIS exploration. For a no-code local map explorer, install the
 environment and, from this inner repository folder, run:
 
 ```powershell
-& C:\Users\gekek\miniconda3\envs\pine-ridge-bison\python.exe -m streamlit run dashboard/app.py --server.address=127.0.0.1 --server.port=8501 --browser.gatherUsageStats=false
+conda run -n pine-ridge-bison python -m streamlit run dashboard/app.py --server.address=127.0.0.1 --server.port=8501 --browser.gatherUsageStats=false
 ```
 
-This command does not require `conda activate` (so it also works when a
-PowerShell execution policy blocks Conda's profile script). The final option
-suppresses Streamlit's optional first-run email prompt. When it starts,
+This portable command works after cloning the GitHub repository and does not
+contain a machine-specific installation path. It does not require
+`conda activate`; Conda only needs to be installed and available in the
+terminal. The final option suppresses Streamlit's optional first-run email
+prompt. When it starts,
 Streamlit prints a local address. Open `http://127.0.0.1:8501` in a browser;
 this is the address configured by the command above. Keep the terminal window
 open while using the dashboard; press `Ctrl+C` there to stop it.
+
+GitHub stores and distributes the project but does not run Streamlit apps
+directly. To give visitors a dashboard they can open without cloning the
+repository, deploy `dashboard/app.py` to a Streamlit-compatible hosting service
+and add the public dashboard URL here.
 
 See `documents/olc_learning_lab.md` for course activities, research questions,
 and further-study ideas. These tools follow the same governance and review
