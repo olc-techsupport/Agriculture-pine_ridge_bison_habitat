@@ -177,11 +177,18 @@ conda run -n pine-ridge-bison python build_data_cube.py
 
 The resulting `outputs/pine_ridge_bhsi_cube.nc` is suitable for introductory
 Python/R/GIS exploration. For a no-code local map explorer, install the
-environment and run:
+environment and, from this inner repository folder, run:
 
-```bash
-conda run -n pine-ridge-bison streamlit run dashboard/app.py
+```powershell
+& C:\Users\gekek\miniconda3\envs\pine-ridge-bison\python.exe -m streamlit run dashboard/app.py --browser.gatherUsageStats=false
 ```
+
+This command does not require `conda activate` (so it also works when a
+PowerShell execution policy blocks Conda's profile script). The final option
+suppresses Streamlit's optional first-run email prompt. When it starts,
+Streamlit prints a local address such as `http://localhost:8501`; open that
+address in a browser. Keep the terminal window open while using the dashboard;
+press `Ctrl+C` there to stop it.
 
 See `documents/olc_learning_lab.md` for course activities, research questions,
 and further-study ideas. These tools follow the same governance and review
