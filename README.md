@@ -2,7 +2,7 @@
 **Author:** Lilly Jones, PhD, Daear Consulting, LLC
 **Partner:** Oglala Lakota College (OLC)  
 **Territory:** Pine Ridge Reservation, Oglala Lakota Nation  
-**License:**  GNU AFFERO GENERAL PUBLIC LICENSE V.3
+**License:**  Apache 2.0
 
 ## Purpose
 This repository supports the Oglala Lakota Nation's bison habitat restoration
@@ -151,7 +151,7 @@ restoration purposes. It is governed by:
   Indigenous Peoples' Data
 
 All analysis results should be shared with the Oglala Lakota College
-Cubedynamics program and the relevant Oglala Lakota Nation land
+Math and Science department and the relevant Oglala Lakota Nation land
 management offices before any external distribution.
 
 See `documents/data_sovereignty.md` for the full governance framework.
