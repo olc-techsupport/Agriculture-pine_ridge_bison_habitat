@@ -118,6 +118,27 @@ Before a management decision, replace them with gridded gSSURGO map-unit and
 downscaled climate inputs, review thresholds and weights with the bison
 program, then ground-truth candidate units.
 
+## OLC learning and community tools
+
+After notebooks 02–07 finish, build a compact NetCDF data cube containing the
+aligned component layers and composite BHSI:
+
+```bash
+python build_data_cube.py
+```
+
+The resulting `outputs/pine_ridge_bhsi_cube.nc` is suitable for introductory
+Python/R/GIS exploration. For a no-code local map explorer, install the
+environment and run:
+
+```bash
+streamlit run dashboard/app.py
+```
+
+See `documents/olc_learning_lab.md` for course activities, research questions,
+and further-study ideas. These tools follow the same governance and review
+requirements as the analysis outputs.
+
 ## Data Sovereignty
 This analysis describes Oglala Lakota land for Oglala Lakota land
 restoration purposes. It is governed by:
