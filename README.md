@@ -79,26 +79,38 @@ results to `outputs/` that the next notebook loads.
 ### Use the project Python environment
 
 This project requires its Conda environment (`pine-ridge-bison`, Python 3.11).
-Do not run its scripts with a global Python interpreter such as
-`C:\Users\gekek\.local\bin\python3.14.exe`; it will not have the required
-scientific packages.
+Do not run its scripts with a system/global Python interpreter; it may not
+have the required scientific packages.
 
-Before running any terminal command, make sure you are in the **inner project
-folder**—the folder that contains `README.md`, `environment.yml`, `notebooks/`,
-and `build_data_cube.py`. The outer `pine_ridge_bison_habitat` folder contains
-this project folder but does not contain the scripts themselves.
+Before running any terminal command, make sure you are in the **project root**:
+the folder that contains `README.md`, `environment.yml`, `notebooks/`, and
+`build_data_cube.py`. After cloning, change into the folder Git created (usually
+named `pine_ridge_bison_habitat`). Do not copy a path from this README; your
+own clone may be in a different location.
 
 ```powershell
-cd C:\Users\gekek\Documents\pine_ridge_bison_habitat\pine_ridge_bison_habitat
+Get-Location
 Get-ChildItem README.md, environment.yml, build_data_cube.py
 ```
 
-If that command lists all three files, you are in the correct folder.
+If that command lists all three files, you are in the correct folder. If it
+reports one or more files are missing, find the project root automatically
+from your current folder:
+
+```powershell
+$projectRoot = Get-ChildItem -Path . -Filter build_data_cube.py -File -Recurse |
+    Select-Object -First 1 -ExpandProperty DirectoryName
+Set-Location $projectRoot
+Get-ChildItem README.md, environment.yml, build_data_cube.py
+```
+
+If `$projectRoot` is blank, you are not in the cloned project or one of its
+parent folders. Navigate to the folder that contains your clone and run the
+same command again.
 
 From the inner repository folder, either activate the environment:
 
 ```powershell
-cd C:\Users\gekek\Documents\pine_ridge_bison_habitat\pine_ridge_bison_habitat
 conda activate pine-ridge-bison
 python build_data_cube.py
 ```
