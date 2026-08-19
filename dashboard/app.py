@@ -16,12 +16,12 @@ st.title("Pine Ridge Bison Habitat Explorer")
 st.caption("A learning and discussion tool. It does not determine where bison belong or authorize land-management decisions.")
 
 layer_paths = {
-    "Vegetation": OUTPUTS_DIR / "bhsi_vegetation.tif",
-    "Soils": OUTPUTS_DIR / "bhsi_soils.tif",
-    "Topography": OUTPUTS_DIR / "bhsi_topography.tif",
-    "Water access": OUTPUTS_DIR / "bhsi_water.tif",
-    "Climate stress": OUTPUTS_DIR / "bhsi_climate.tif",
-    "Combined BHSI": OUTPUTS_DIR / "bhsi_composite.tif",
+    "Vegetation": OUTPUTS_DIR/"bhsi_vegetation.tif",
+    "Soils": OUTPUTS_DIR/"bhsi_soils.tif",
+    "Topography": OUTPUTS_DIR/"bhsi_topography.tif",
+    "Water access": OUTPUTS_DIR/"bhsi_water.tif",
+    "Climate stress": OUTPUTS_DIR/"bhsi_climate.tif",
+    "Combined BHSI": OUTPUTS_DIR/"bhsi_composite.tif",
 }
 missing = [name for name, path in layer_paths.items() if not path.exists()]
 if missing:
