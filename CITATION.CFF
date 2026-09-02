@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use this material, please cite it as below."
+
+title: "Pine Ridge Bison Analysis: Geospatial Analysis for Oglala Lakota College"
+
+type: software
+
+authors:
+  - family-names: "Jones"
+    given-names: "Lilly"
+    affiliation: "Daear Consulting LLC"
+
+abstract: >
+  A reproducible geospatial habitat suitability training and analysis series
+  developed by Daear Consulting LLC for Oglala Lakota College under
+  a USDA National Institute of Food and Agriculture (NIFA) funded project.
+
+license: Apache-2.0
+
+repository-code: "https://github.com/olc-techsupport/pine_ridge_bison_habitat"
+
+keywords:
+  - habitat suitability
+  - bison
+  - geospatial analysis
+  - Oglala Lakota College
+  - Indigenous data sovereignty
+  - reproducible research

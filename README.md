@@ -1,8 +1,13 @@
 # Pine Ridge Bison Habitat Suitability Analysis
 **Author:** Lilly Jones, PhD, Daear Consulting, LLC
-**Partner:** Oglala Lakota College (OLC)  
+**Developed for:** Oglala Lakota College (OLC)  
 **Territory:** Pine Ridge Reservation, Oglala Lakota Nation  
-**License:**  Apache 2.0
+**License:**  Apache 2.0 (code; review of other materials is pending)                                                                                    
+**Funding**: This material was developed as part of a project funded by the USDA National Institute of Food and Agriculture (NIFA).                       
+**Project role**: Daear Consulting LLC developed the geospatial code, workflows, documentation, and instructional materials under contract to Oglala Lakota College.                                                                                                                      
+
+## Data Sovereignty and Governance (draft under review)
+This repository contains workflows developed for use in support of Oglala Lakota College and Oglala Sioux Tribe–related research, education, and data activities. Public availability of code or documentation does not imply that Tribal data, knowledge, or derived information are open or unrestricted. Use of Tribal data and knowledge remains subject to applicable Tribal governance, permissions, protocols, and data sovereignty requirements.
 
 ## Purpose
 This repository supports the Oglala Lakota Nation's bison habitat restoration
@@ -217,8 +222,3 @@ Math and Science department and the relevant Oglala Lakota Nation land
 management offices before any external distribution.
 
 See `documents/data_sovereignty.md` for the full governance framework.
-
-## Citation
-Jones, L. (2025). Pine Ridge Bison Habitat Suitability Analysis.
-Daear Consulting, LLC, in partnership with
-Oglala Lakota College Cubedynamics Project.
