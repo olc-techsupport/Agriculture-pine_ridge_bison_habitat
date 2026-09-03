@@ -4,23 +4,23 @@
 **Territory:** Pine Ridge Reservation, Oglala Lakota Nation  
 **License:**  Apache 2.0 (code; review of other materials is pending)                                                                                    
 **Funding**: This material was developed as part of a project funded by the USDA National Institute of Food and Agriculture (NIFA).                       
-**Project role**: Daear Consulting LLC developed the geospatial code, workflows, documentation, and instructional materials under contract to Oglala Lakota College.                                                                                                                      
+**Project role**: Daear Consulting LLC developed the geospatial code, workflows, and documentation under contract to Oglala Lakota College.                                                                                                                      
 
 ## Data Sovereignty and Governance (draft under review)
 This repository contains workflows developed for use in support of Oglala Lakota College and Oglala Sioux Tribe–related research, education, and data activities. Public availability of code or documentation does not imply that Tribal data, knowledge, or derived information are open or unrestricted. Use of Tribal data and knowledge remains subject to applicable Tribal governance, permissions, protocols, and data sovereignty requirements.
 
 ## Purpose
-This repository supports the Oglala Lakota Nation's bison habitat restoration
-program by providing a reproducible, spatially explicit assessment of land
-suitability for bison across the full Pine Ridge Reservation.
+This repository provides an educational, reproducible, spatially explicit
+screening analysis of potential bison habitat conditions across the Pine Ridge
+Census statistical boundary. It is intended to support learning and locally
+authorized discussion; it does not represent an approved OST or OLC habitat
+assessment or restoration plan.
 
-Bison are not just a wildlife management objective. For the Oglala Lakota,
-bison (Pte Oyate) are central to cultural identity, food sovereignty, and
-land stewardship. Restoring bison habitat to Pine Ridge is an act of ecological
-and cultural restoration simultaneously. This analysis is designed to
-support that work by identifying which lands are most ready, which need
-investment before they can carry herds, and how climate change will affect
-habitat capacity over time.
+Bison and Pte Oyate have cultural, ecological, food-system, and stewardship
+significance that cannot be defined by this repository. Cultural framing,
+terminology, and intended uses remain subject to review by the appropriate
+OLC/OST authorities. The model asks how selected public environmental layers
+behave under transparent assumptions; it does not determine where bison belong.
 
 ## What This Repository Produces
 **Bison Habitat Suitability Index (BHSI)** is a pixel-level composite
@@ -31,10 +31,11 @@ score (0–1) across the full Pine Ridge Reservation, synthesizing:
 - Water access (distance to streams, ponds, springs)
 - Climate stress (heat days, precipitation trends)
 
-**Priority restoration units** are viable bison habitat patches identified
-by DBSCAN clustering of high-BHSI pixels, ranked by composite score and
+**Candidate connected regions** are contiguous groups of high-BHSI pixels
+identified by memory-efficient eight-neighbor raster labeling, summarized by composite score and
 accompanied by a summary table of area, water access, soils quality, and
-current land cover. See `documents/methods_clustering.md` for the full
+current land cover. They are not approved priorities or viable management
+units. See `documents/methods_contiguous_patches.md` for the full
 rationale for this approach.
 
 ## Notebooks
@@ -46,11 +47,13 @@ rationale for this approach.
 | 04 | Topography | Slope, aspect, terrain suitability |
 | 05 | Water access | Distance-to-water raster |
 | 06 | Climate stress | Heat days, precip projections (MACAv2) |
-| 07 | Bison Habitat Suitability Index | BHSI raster and priority restoration units |
+| 07 | Bison Habitat Suitability Index | Screening raster and candidate connected regions |
 
 ## Data Sources
-All data is downloaded at runtime and cached to `data/cache/`. Nothing
-is committed to this repository.
+Source data and generated outputs are downloaded or created at runtime and are
+ignored by Git. The notebooks themselves are committed without saved execution
+outputs. See `outputs/artifact_manifest.csv` for the expected products and
+their review status.
 
 | Source | What | Notebook |
 |---|---|---|
@@ -80,6 +83,14 @@ jupyter lab notebooks/
 
 Run notebooks in order 01 through 07. Each notebook exports intermediate
 results to `outputs/` that the next notebook loads.
+
+Run the automated quality checks before and after changing the workflow:
+
+```powershell
+python -m pytest
+```
+
+Continuous integration runs the same checks for pushes and pull requests.
 
 ### Use the project Python environment
 
@@ -130,7 +141,9 @@ In VS Code, select **Python (pine-ridge-bison)** as the notebook kernel and
 Python interpreter before running notebooks or scripts.
 
 Notebook 07 stops unless all five component rasters exist, contain valid
-pixels, and match exactly on CRS, extent, transform, and shape. It also writes
+pixels, vary spatially, and match exactly on CRS, extent, transform, and shape.
+Uniform fallback layers are rejected because they cannot distinguish candidate
+regions. Notebook 07 also writes
 `outputs/bhsi_provenance.json` with input hashes, parameters, weights, code
 revision, and the required governance review status.
 
@@ -156,7 +169,7 @@ pine_ridge_bison_habitat/
 │   └── figures/
 ├── documents/
 │   ├── data_sovereignty.md
-│   ├── methods_clustering.md
+│   ├── methods_contiguous_patches.md
 │   └── bhsi_weights.md
 ├── environment.yml
 ├── .gitignore
@@ -170,6 +183,11 @@ interpreted as within-reservation variation or used alone to rank patches.
 Before a management decision, replace them with gridded gSSURGO map-unit and
 downscaled climate inputs, review thresholds and weights with the bison
 program, then ground-truth candidate units.
+
+Biological, cultural, spatial, climate, and management assumptions are tracked
+in `documents/assumptions_register.md`. Values in `src/constants.py` are
+transparent teaching defaults unless that register identifies reviewed
+evidence and an approved use.
 
 ## OLC learning and community tools
 
@@ -203,22 +221,25 @@ repository, deploy `dashboard/app.py` to a Streamlit-compatible hosting service
 and add the public dashboard URL here.
 
 See `documents/olc_learning_lab.md` for course activities, research questions,
-and further-study ideas. These tools follow the same governance and review
-requirements as the analysis outputs.
+and further-study ideas. Instructors should also use
+`documents/facilitator_guide.md` and `documents/learning_design.md`. These tools
+follow the same governance and review requirements as the analysis outputs.
 
 ## Data Sovereignty
-This analysis describes Oglala Lakota land for Oglala Lakota land
-restoration purposes. It is governed by:
+This analysis uses public data describing Oglala Lakota lands and ecological
+context. The locally applicable governance approach remains under review.
+Reference points under consideration include:
 
-- **OCAP®** : Ownership, Control, Access, Possession
 - **CARE Principles** : Collective Benefit, Authority to Control,
   Responsibility, Ethics
 - **FAIR Principles** : Findable, Accessible, Interoperable, Reusable
 - **IEEE 2890-2025** : Recommended Practice for Provenance of
   Indigenous Peoples' Data
 
-All analysis results should be shared with the Oglala Lakota College
-Math and Science department and the relevant Oglala Lakota Nation land
-management offices before any external distribution.
+Naming a framework does not imply that OST or OLC has adopted it. OCAP® may be
+considered but originated in a Canadian First Nations context and must not be
+treated as locally adopted without confirmation. Precise candidate-region
+outputs must not be distributed externally until the appropriate OLC/OST
+authority and review process are confirmed and approval is recorded.
 
 See `documents/data_sovereignty.md` for the full governance framework.

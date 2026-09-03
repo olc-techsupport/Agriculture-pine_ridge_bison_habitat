@@ -1,4 +1,6 @@
 name: pine-ridge-bison
+# Compatible direct dependencies for development and teaching. Generate a
+# platform-specific explicit lock after OLC approves the delivery environment.
 channels:
   - conda-forge
   - defaults

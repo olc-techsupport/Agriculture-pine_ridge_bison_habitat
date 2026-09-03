@@ -1,0 +1,11 @@
+artifact,generating_notebook,source_class,sensitivity,release_status,limitations
+pine_ridge_boundary.geojson,01_study_area.ipynb,public Census statistical boundary,contextual,not approved,Not a legal or community-defined boundary
+bhsi_vegetation.tif,02_vegetation.ipynb,public satellite-derived raster,contextual,not approved,Classification and temporal-resolution limitations
+bhsi_soils.tif,03_soils.ipynb,public spatial soil raster,contextual,not approved,Must be spatially resolved; no uniform fallback accepted
+bhsi_topography.tif,04_topography.ipynb,public elevation-derived raster,contextual,not approved,Resolution and slope-scoring assumptions
+bhsi_water.tif,05_water_access.ipynb,public mapped hydrography-derived raster,sensitive when synthesized,not approved,Mapped feature is not proof of reliability or access
+bhsi_climate.tif,06_climate_stress.ipynb,public downscaled projection raster,contextual,not approved,Must be spatially resolved; scenario and model uncertainty
+bhsi_composite.tif,07_habitat_suitability_index.ipynb,derived screening raster,sensitive,external distribution not authorized,Weights and thresholds are unapproved
+priority_restoration_units.gpkg,07_habitat_suitability_index.ipynb,derived connected regions,highly sensitive,external distribution not authorized,Not restoration priorities or management units
+priority_restoration_units.csv,07_habitat_suitability_index.ipynb,derived region summary,highly sensitive,external distribution not authorized,May reveal precise candidate locations
+bhsi_provenance.json,07_habitat_suitability_index.ipynb,runtime provenance,contextual,not approval evidence,Records process and review status only

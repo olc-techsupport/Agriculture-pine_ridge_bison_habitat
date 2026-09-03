@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "If you use this material, please cite it as below."
+message: "Citation metadata is provisional pending OLC approval and complete NIFA award information."
 
 title: "Pine Ridge Bison Analysis: Geospatial Analysis for Oglala Lakota College"
 
@@ -11,9 +11,14 @@ authors:
     affiliation: "Daear Consulting LLC"
 
 abstract: >
-  A reproducible geospatial habitat suitability training and analysis series
+  A reproducible geospatial habitat suitability analysis repository with learning-design stubs
   developed by Daear Consulting LLC for Oglala Lakota College under
   a USDA National Institute of Food and Agriculture (NIFA) funded project.
+
+notes: >
+  Author order, OLC attribution, copyright ownership, governance review,
+  and the complete NIFA award name and number remain pending. This citation
+  does not imply OST or OLC approval of model outputs or conclusions.
 
 license: Apache-2.0
 

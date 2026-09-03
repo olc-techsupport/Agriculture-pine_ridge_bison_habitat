@@ -3,30 +3,22 @@ from __future__ import annotations
 """
 sovereignty.py data governance acknowledgment for pine_ridge_bison_habitat.
 
-This analysis describes Oglala Lakota land for Oglala Lakota land
-restoration purposes. All frameworks below apply.
+This module prints a draft acknowledgment for public-data teaching workflows.
+Framework applicability and cultural wording remain pending OLC/OST review.
 """
 from src.constants import GOVERNANCE_REFS
 
 _PREAMBLE = """
-PINE RIDGE BISON HABITAT ANALYSIS DATA GOVERNANCE ACKNOWLEDGMENT
-This analysis describes land within the Pine Ridge Reservation, home of
-the Oglala Lakota Nation. Bison (Pte Oyate) hold deep cultural, spiritual,
-and ecological significance for the Oglala Lakota people. This analysis
-exists to support Tribal land stewardship, not to define it.
+PINE RIDGE BISON HABITAT ANALYSIS: DRAFT DATA GOVERNANCE ACKNOWLEDGMENT
+This public-data analysis describes the Pine Ridge Census statistical area
+and ecological context. Cultural wording, terminology for Pte Oyate, and the
+applicable governance frameworks remain pending OLC/OST review.
 
 Results should be understood as one input into a land management
 conversation, not as a determination of where bison belong.
-That determination rests with the Oglala Lakota Nation.
+The repository does not determine where bison belong or authorize action.
 
-GOVERNANCE FRAMEWORKS:
-
-OCAP®  : The Oglala Lakota Nation has Ownership, Control, Access, and
-  Possession of data describing their land and resources. Analysis results
-  derived from public federal data about Pine Ridge still carry this
-  obligation. Share results with OLC Cubedynamics and the relevant
-  Oglala Lakota Nation land management offices before external distribution.
-  Reference: https://fnigc.ca/ocap-training/
+FRAMEWORKS UNDER CONSIDERATION (NAMING DOES NOT IMPLY LOCAL ADOPTION):
 
 CARE   : Analysis must deliver Collective Benefit to the Oglala Lakota
   community, respect their Authority to Control land use decisions,
@@ -35,8 +27,8 @@ CARE   : Analysis must deliver Collective Benefit to the Oglala Lakota
   Reference: https://www.gida-global.org/care
 
 FAIR   : Data is Findable, Accessible, Interoperable, and Reusable.
-  FAIR governs technical practices; CARE and OCAP® govern ethical
-  obligations to the Oglala Lakota Nation.
+  FAIR governs technical practices; it does not determine local authority,
+  ethics, permission, or release decisions.
   Reference: https://www.go-fair.org/fair-principles/
 
 IEEE 2890-2025 : Recommended Practice for Provenance of Indigenous
@@ -156,7 +148,8 @@ def generate_citations(source_keys: list[str]) -> str:
         if src.get("url"):
             lines.append(f"  {src['url']}")
         lines.append(f"  Steward: {src['steward']} | License: {src['license']}")
-    lines.append("\nGovernance: OCAP® | CARE | FAIR | IEEE 2890-2025")
+    lines.append("\nDraft references under consideration: CARE | FAIR | IEEE 2890-2025 | Local Contexts | OCAP®")
+    lines.append("Naming a framework does not imply OST or OLC adoption; see documents/data_sovereignty.md.")
     for name, url in GOVERNANCE_REFS.items():
         lines.append(f"  {name.upper()}: {url}")
     return "\n".join(lines)

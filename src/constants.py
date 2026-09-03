@@ -132,11 +132,10 @@ BHSI_WEIGHTS = {
     "climate":     0.10,    # future stress = planning horizon factor
 }
 
-# DBSCAN clustering parameters 
-# Documented in documents/methods_clustering.md
-DBSCAN_EPS_M         = 1000    # meters for max distance between pixels in same patch
-DBSCAN_MIN_ACRES     = 500     # minimum viable bison management unit
-MIN_PATCH_ACRES      = 500     # raster-native contiguous-patch minimum
+# Raster connected-component parameters.
+# These are transparent teaching defaults, not approved management thresholds.
+# Documented in documents/methods_contiguous_patches.md.
+MIN_PATCH_ACRES      = 500     # minimum retained connected-region area
 BHSI_THRESHOLD_PCT   = 70      # top N% of BHSI scores considered high-suitability
 
 # Growing season 
@@ -144,7 +143,6 @@ GROWING_MONTHS = [5, 6, 7, 8, 9]
 
 # Data sovereignty 
 GOVERNANCE_REFS = {
-    "ocap":       "https://fnigc.ca/ocap-training/",
     "care":       "https://www.gida-global.org/care",
     "fair":       "https://www.go-fair.org/fair-principles/",
     "ieee_2890":  "https://standards.ieee.org/ieee/2890/10318/",

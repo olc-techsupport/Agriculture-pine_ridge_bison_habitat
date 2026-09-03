@@ -10,7 +10,12 @@ import subprocess
 from src.constants import BHSI_WEIGHTS, CRS_PROJECTED, TARGET_RES_M
 
 
-def write_bhsi_manifest(output_path: Path, layer_paths: dict[str, Path], parameters: dict) -> Path:
+def write_bhsi_manifest(
+    output_path: Path,
+    layer_paths: dict[str, Path],
+    parameters: dict,
+    layer_diagnostics: dict | None = None,
+) -> Path:
     """Write input paths, hashes, grid settings, and review status beside BHSI outputs."""
     import hashlib
 
@@ -32,10 +37,20 @@ def write_bhsi_manifest(output_path: Path, layer_paths: dict[str, Path], paramet
         "analysis_grid": {"crs": CRS_PROJECTED, "resolution_m": TARGET_RES_M},
         "weights": BHSI_WEIGHTS,
         "parameters": parameters,
-        "inputs": {name: {"path": str(path), "sha256": digest(path)} for name, path in layer_paths.items()},
+        "inputs": {
+            name: {
+                "path": str(path),
+                "sha256": digest(path),
+                "source_type": "derived spatial raster from public data",
+                "fallback": False,
+                **((layer_diagnostics or {}).get(name, {})),
+            }
+            for name, path in layer_paths.items()
+        },
         "governance": {
             "external_distribution_authorized": False,
-            "required_review": "OLC Cubedynamics and appropriate Oglala Lakota Nation offices",
+            "governance_status": "Draft; review authority and release process pending OLC/OST confirmation",
+            "required_review": "Appropriate OLC/OST authority to be confirmed",
         },
     }
     output_path.parent.mkdir(parents=True, exist_ok=True)

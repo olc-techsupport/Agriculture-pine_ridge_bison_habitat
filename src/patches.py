@@ -11,8 +11,8 @@ def label_habitat_patches(
 ) -> tuple[np.ndarray, int]:
     """Label contiguous high-suitability regions and remove undersized patches.
 
-    Uses 8-neighbor raster connectivity, avoiding DBSCAN's large coordinate and
-    neighbor-graph allocations.  Labels are sequential positive integers; zero
+    Uses 8-neighbor raster connectivity without a large coordinate-neighbor
+    graph. Labels are sequential positive integers; zero
     represents background or a patch below ``minimum_acres``.
     """
     from scipy import ndimage

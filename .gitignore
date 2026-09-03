@@ -32,8 +32,11 @@ data/raw/
 data/interim/
 data/cache/
 
-# Outputs 
-outputs/
+# Outputs: generated products stay ignored; documentation and the expected
+# artifact inventory are versioned.
+outputs/*
+!outputs/README.md
+!outputs/artifact_manifest.csv
 
 # Download provenance and local release decisions
 data/provenance/

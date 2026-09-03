@@ -10,7 +10,8 @@ it is spatially resolved across the reservation. A reservation-wide fallback
 score is planning context, not patch-scale evidence; see
 `limitations_and_review.md` before presenting results externally.
 
-Default weights (defined in `src/constants.py`):
+Default teaching weights (defined in `src/constants.py`) are hypotheses for
+critique, not validated biological relationships or approved management values:
 
 | Component | Weight | Rationale |
 |---|---|---|
@@ -110,8 +111,8 @@ but should not override the near-term physical conditions that determine
 where bison can be placed today.
 
 ## Sensitivity Analysis
-Notebook 07 includes a sensitivity analysis showing how the priority
-ranking of restoration patches changes under different weight assumptions.
+Notebook 07 includes a sensitivity analysis showing how candidate connected
+regions change under different weight assumptions.
 This is important for presenting results to OLC and Tribal decision-makers:
 
 - If the ranking is stable across reasonable weight variations,
@@ -142,9 +143,10 @@ BHSI_WEIGHTS = {
 }
 ```
 
-Change these values in consultation with the OLC bison program and
-the Oglala Lakota Nation land management office. The weights represent
-a scientific starting point, but local ecological knowledge and management
-priorities should inform any adjustments.
+Change these values only as a documented hypothetical scenario unless the
+appropriate OLC/OST authority has approved their management use. Local
+ecological knowledge must not be extracted into the model without an approved
+governance process. Scientific literature, field validation, and authorized
+local expertise are all needed before treating weights as decision evidence.
 
 **Required:** weights must sum to 1.0.
