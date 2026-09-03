@@ -1,5 +1,6 @@
-"""Apply the common NIFA-aligned structure to the bison notebook series."""
 from __future__ import annotations
+
+"""Apply the common NIFA-aligned structure to the bison notebook series."""
 
 import json
 import uuid

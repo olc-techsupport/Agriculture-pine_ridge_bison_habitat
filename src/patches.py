@@ -1,5 +1,6 @@
-"""Memory-safe raster patch identification for BHSI priority units."""
 from __future__ import annotations
+
+"""Memory-safe raster patch identification for BHSI priority units."""
 
 import numpy as np
 

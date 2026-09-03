@@ -2,7 +2,7 @@
 
 This repository analyzes public environmental data describing the Pine Ridge Reservation and ecologically relevant context. Public availability does not remove the responsibility to represent Oglala Lakota lands, waters, relatives, and communities accurately and respectfully.
 
-This wording, including terminology for Pte Oyate and the applicable governance frameworks, is a working draft. It must not be represented as approved by OST, OLC, a bison program, or a Research Review Board. The responsible review authority and contact remain to be confirmed.
+This wording, including terminology for Pte Oyate and the applicable governance frameworks, is a working draft. It must not be represented as approved by OST, OLC, a bison program, or a Research Review Board. Review of this material is pending.
 
 ## Current data boundary
 

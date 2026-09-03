@@ -14,7 +14,7 @@ This seven-session series introduces spatial data literacy, reproducible habitat
 
 ## Repeating session pattern
 
-Allow 75–100 minutes per notebook:
+Allow 75-100 minutes per notebook:
 
 1. **Orient (10 minutes):** purpose, objectives, governance checkpoint, and source.
 2. **Predict (10 minutes):** learners record expected spatial patterns and evidence that might change their view.

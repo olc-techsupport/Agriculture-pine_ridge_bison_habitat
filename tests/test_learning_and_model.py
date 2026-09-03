@@ -40,7 +40,7 @@ def test_notebooks_are_clean_and_code_parses() -> None:
 
 def test_removed_memory_intensive_method_is_not_part_of_the_series() -> None:
     removed_name = "DB" + "SCAN"
-    relevant = [ROOT / "README.md", ROOT / "src" / "constants.py", ROOT / "src" / "patches.py", ROOT / "documents" / "methods_contiguous_patches.md"] + NOTEBOOKS
+    relevant = [ROOT/"README.md", ROOT/"src"/"constants.py", ROOT/"src"/"patches.py", ROOT/"documents"/"methods_contiguous_patches.md"] + NOTEBOOKS
     assert all(removed_name not in path.read_text(encoding="utf-8") for path in relevant)
 
 
@@ -67,7 +67,7 @@ def _write_raster(path: Path, values: np.ndarray) -> None:
 
 
 def test_uniform_fallback_is_rejected(tmp_path: Path) -> None:
-    path = tmp_path / "uniform.tif"
+    path = tmp_path/"uniform.tif"
     _write_raster(path, np.full((2, 2), 0.5))
     with pytest.raises(ValueError, match="spatially uniform"):
         validate_bhsi_layers({"soils": path}, {"soils"})
